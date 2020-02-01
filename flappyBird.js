@@ -3,12 +3,23 @@ var ctx = cvs.getContext('2d');
 
 // some var
 
-var bx = 50, by = 160, bv = 16;
-var fgh = 130, fgx = 0, fgy = cvs.height - fgh, fgw = cvs.width;
-var pw = 55, ph = 325;
+var bd = new Image();
+var bg = new Image();
+var fg = new Image();
+var pN = new Image();
+var pS = new Image();
 
-var gap = 75;
-var constant = ph + gap; 
+bd.src = "images/bird.png";         
+bg.src = "images/bg.png";
+fg.src = "images/fg.png";
+pN.src = "images/pipeNorth.png";
+pS.src = "images/pipeSouth.png";
+
+var bx = 50, by = 160;
+// var fgh = 130, fgx = 0, fgy = cvs.height - fgh, fgw = cvs.width;
+
+var gap = 95;
+var constant; 
 
 var gravity = 2.5;
 
@@ -29,45 +40,44 @@ var pipe = [];
 pipe[0] = {
     
     x : cvs.width,
-    y : -95
+    y : 0
 };
 
 // draw background
 
 function draw() {
+
+    ctx.drawImage(bg, 0, 0);
     
-    cvs.width = cvs.width;
-    
-    ctx.beginPath();
-    ctx.arc(bx, by, bv, 0, 2 * Math.PI);
-    ctx.stroke();
-    for (i = 0; i < pipe.length; i++) {
-        
-        ctx.fillStyle = 'gray'
-        ctx.fillRect(pipe[i].x, pipe[i].y, pw, ph)
-        ctx.fillStyle = 'gray'
-        ctx.fillRect(pipe[i].x, pipe[i].y + constant, pw, ph)
+
+    ctx.drawImage(bd, bx, by);
+
+    ctx.drawImage(fg,0,cvs.height - fg.height);
+
+    for (var i = 0; i < pipe.length; i++) {
+        constant = pN.height + gap;
+        ctx.drawImage(pN, pipe[i].x, pipe[i].y);
+
+        ctx.drawImage(pS, pipe[i].x, pipe[i].y + constant);
+
         pipe[i].x--;
         
         if(pipe[i].x == 110){
             pipe.push({
                 x : cvs.width,
-                y : Math.floor(Math.random()*ph) - ph           
+                y : Math.floor(Math.random()*pN.height) - pN.height           
             });
         }
-        if (bx + bv >= pipe[i].x && bx <= pipe[i].x + pw
-			&& (by <= pipe[i].y + ph || by + bv >= pipe[i].y + constant)
-			|| by + bv >= canvas.height - fgh) {
+        if (bx + bd.width >= pipe[i].x && bx <= pipe[i].x + pN.width
+			&& (by <= pipe[i].y + pN.height || by + bd.width >= pipe[i].y + constant)
+			|| by + bd.width >= canvas.height - fg.height) {
 			location.reload();
 		}
         if(pipe[i].x == 5){
             score++;
         }
     }
-    
-    ctx.fillStyle = 'blue'
-    ctx.fillRect(fgx, fgy, fgw, fgh);
-    
+        
     by += gravity;
     
     ctx.fillStyle = 'red';
